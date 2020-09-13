@@ -21,8 +21,13 @@ func createConnect() string {
 	return fmt.Sprintf("%s:%s@%s/%s?%s", USER, PASS, PROTOCOL, DBNAME, OPTION)
 }
 
-func open() error {
-	db, err := gorm.Open(mysql.Open(createConnect()), nil)
+type model struct {
+	DB *gorm.DB
+}
+
+func (db *model) open() error {
+	var err error
+	db.DB, err = gorm.Open(mysql.Open(createConnect()), nil)
 	if err != nil {
 		return err
 	}
@@ -31,7 +36,9 @@ func open() error {
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	if err := open(); err != nil {
+	var db model
+
+	if err := db.open(); err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
 
@@ -47,9 +54,8 @@ type Response struct {
 
 func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	fmt.Println(request)
-
-	if err := open(); err != nil {
+	var db model
+	if err := db.open(); err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
 
