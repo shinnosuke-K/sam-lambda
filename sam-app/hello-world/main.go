@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -34,12 +35,29 @@ func (db *model) open() error {
 	return nil
 }
 
+type Content struct {
+	ID        int        `json:"id"`
+	TicketID  int        `json:"ticket_id"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
+func (db *model) hasTable() bool {
+	return db.DB.Table("ticket_contents").Migrator().HasTable(&Content{})
+}
+
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	var db model
 
 	if err := db.open(); err != nil {
 		return events.APIGatewayProxyResponse{}, err
+	}
+	if !db.hasTable() {
+		err := db.DB.Migrator().CreateTable(&Content{})
+		if err != nil {
+			return events.APIGatewayProxyResponse{}, err
+		}
 	}
 
 	return events.APIGatewayProxyResponse{
