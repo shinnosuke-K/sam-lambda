@@ -61,9 +61,7 @@ func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 		return events.APIGatewayProxyResponse{}, err
 	}
 
-	response := Response{
-		ID: 1,
-	}
+	response := many()
 
 	jsonBytes, _ := json.Marshal(response)
 
@@ -71,6 +69,19 @@ func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 		Body:       string(jsonBytes),
 		StatusCode: 200,
 	}, nil
+}
+
+func many() []Response {
+
+	res := make([]Response, 10000)
+
+	for i := 0; i < 1000; i++ {
+		res = append(res, Response{
+			ID: i,
+		})
+	}
+	fmt.Println(len(res))
+	return res
 }
 
 func main() {
