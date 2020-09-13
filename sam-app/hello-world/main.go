@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -48,6 +49,32 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}, nil
 }
 
+type Response struct {
+	ID int `json:"id"`
+}
+
+func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	fmt.Println(request)
+
+	if err := open(); err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	response := Response{
+		ID: 1,
+	}
+
+	jsonBytes, _ := json.Marshal(response)
+
+	return events.APIGatewayProxyResponse{
+		Body:       string(jsonBytes),
+		StatusCode: 200,
+	}, nil
+}
+
 func main() {
-	lambda.Start(handler)
+	//lambda.Start(handler)
+
+	lambda.Start(httpHandler)
 }
