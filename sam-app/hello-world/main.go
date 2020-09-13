@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"gorm.io/driver/mysql"
@@ -10,11 +9,6 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-)
-
-var (
-	// ErrNon200Response non 200 status code in response
-	ErrNon200Response = errors.New("Non 200 Response found")
 )
 
 func createConnect() string {
@@ -32,8 +26,6 @@ func open() error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(db.Name())
 	return nil
 }
 
@@ -80,7 +72,6 @@ func many() []Response {
 			ID: i,
 		})
 	}
-	fmt.Println(len(res))
 	return res
 }
 
