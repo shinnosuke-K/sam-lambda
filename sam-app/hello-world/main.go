@@ -78,18 +78,6 @@ func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 	}, nil
 }
 
-func many() []Response {
-
-	res := make([]Response, 10000)
-
-	for i := 0; i < 1000; i++ {
-		res = append(res, Response{
-			ID: i,
-		})
-	}
-	return res
-}
-
 func main() {
 	lambda.Start(httpHandler)
 }
