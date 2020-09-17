@@ -1,15 +1,20 @@
 package table
 
 import (
+	"encoding/json"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type Company struct {
-	ID         int64
-	Name       string
-	CreateTime time.Time
+	ID         int64     `json:"id"`
+	Name       string    `json:"name"`
+	CreateTime time.Time `json:"create_time"`
+}
+
+func (c *Company) Mapping(jsonBody []byte) error {
+	return json.Unmarshal(jsonBody, &c)
 }
 
 func (c Company) HasTable(db *gorm.DB) bool {
