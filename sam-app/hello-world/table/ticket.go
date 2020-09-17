@@ -1,7 +1,6 @@
 package table
 
 import (
-	"encoding/json"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,10 +18,6 @@ type Ticket struct {
 	RequesterID    int64
 	AssigneeID     int64
 	OrganizationID int64
-}
-
-func (t *Ticket) Mapping(byteBody []byte) error {
-	return json.Unmarshal(byteBody, &t)
 }
 
 func (t Ticket) HasTable(db *gorm.DB) bool {

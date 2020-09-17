@@ -1,7 +1,6 @@
 package table
 
 import (
-	"encoding/json"
 	"time"
 
 	"gorm.io/gorm"
@@ -15,10 +14,6 @@ type User struct {
 	OrganizationID int64
 	Alias          string
 	Role           string
-}
-
-func (u *User) Mapping(byteBody []byte) error {
-	return json.Unmarshal(byteBody, &u)
 }
 
 func (u User) HasTable(db *gorm.DB) bool {
