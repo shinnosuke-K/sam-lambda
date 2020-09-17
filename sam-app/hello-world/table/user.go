@@ -7,6 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type JsonUsers struct {
+	Users    []User `json:"users"`
+	NextPage string `json:"next_page"`
+}
+
 type User struct {
 	ID             int64     `json:"id"`
 	Name           string    `json:"name"`
@@ -17,22 +22,31 @@ type User struct {
 	Role           string    `json:"role"`
 }
 
-func (u *User) Mapping(jsonBody []byte) error {
-	return json.Unmarshal(jsonBody, &u)
+func (u *JsonUsers) HasTable(db *gorm.DB) bool {
+	return db.Migrator().HasTable(&User{})
 }
 
-func (u User) HasTable(db *gorm.DB) bool {
-	return db.Migrator().HasTable(&u)
+func (u *JsonUsers) CreateTable(db *gorm.DB) error {
+	return db.Migrator().CreateTable(&User{})
 }
 
-func (u User) CreateTable(db *gorm.DB) error {
-	return db.Migrator().CreateTable(&u)
+func (u *JsonUsers) Mapping(jsonBody []byte) error {
+
+	err := json.Unmarshal(jsonBody, &u)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (u User) Insert(db *gorm.DB) {
+func (u *JsonUsers) GetBody() []byte {
+	return nil
+}
+
+func (u JsonUsers) Insert(db *gorm.DB) {
 	panic("implement me")
 }
 
-func NewUser() Table {
-	return &User{}
+func NewUser() *JsonUsers {
+	return new(JsonUsers)
 }
