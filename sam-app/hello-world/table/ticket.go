@@ -2,6 +2,7 @@ package table
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -40,27 +41,81 @@ type Ticket struct {
 	OrganizationID int64
 }
 
-func (t Ticket) Mapping(jsonBody []byte) (JsonTicket, error) {
-	var jt JsonTicket
-	err := json.Unmarshal(jsonBody, &jt)
-	if err != nil {
-		return JsonTicket{}, err
+func (t *JsonTicket) HasTable(db *gorm.DB) bool {
+	return db.Migrator().HasTable(&Ticket{})
+}
+
+func (t *JsonTicket) CreateTable(db *gorm.DB) error {
+	return db.Migrator().CreateTable(&Ticket{})
+}
+
+func (t *JsonTicket) GetBody() []byte {
+
+	test := JsonTicket{
+		Contents: []Content{
+			{
+				ID:             time.Now().Unix() / 2,
+				CreateTime:     time.Now().Local(),
+				UpdateTime:     time.Now().Local(),
+				Type:           "",
+				Subject:        "",
+				Priority:       "",
+				Status:         "",
+				Tags:           []string{"a", "b", "c"},
+				RequesterID:    0,
+				AssigneeID:     0,
+				OrganizationID: 0,
+			},
+			{
+				ID:             time.Now().Unix() / 3,
+				CreateTime:     time.Now().Local(),
+				UpdateTime:     time.Now().Local(),
+				Type:           "",
+				Subject:        "",
+				Priority:       "",
+				Status:         "",
+				Tags:           []string{"d", "e", "f"},
+				RequesterID:    0,
+				AssigneeID:     0,
+				OrganizationID: 0,
+			}},
+		NextPage: "",
 	}
-	return jt, nil
+
+	j, _ := json.Marshal(test)
+	return j
 }
 
-func (t Ticket) HasTable(db *gorm.DB) bool {
-	return db.Migrator().HasTable(&t)
+func (t *JsonTicket) Mapping(jsonBody []byte) error {
+	err := json.Unmarshal(jsonBody, &t)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (t Ticket) CreateTable(db *gorm.DB) error {
-	return db.Migrator().CreateTable(&t)
+func (t *JsonTicket) Insert(db *gorm.DB) {
+	ticketRecords := make([]Ticket, len(t.Contents))
+
+	for n := range ticketRecords {
+		ticketRecords[n] = Ticket{
+			ID:             t.Contents[n].ID,
+			CreateTime:     t.Contents[n].CreateTime,
+			UpdateTime:     t.Contents[n].UpdateTime,
+			Type:           t.Contents[n].Type,
+			Subject:        t.Contents[n].Subject,
+			Priority:       t.Contents[n].Priority,
+			Status:         t.Contents[n].Status,
+			Tag:            strings.Join(t.Contents[n].Tags, ","),
+			RequesterID:    t.Contents[n].RequesterID,
+			AssigneeID:     t.Contents[n].AssigneeID,
+			OrganizationID: t.Contents[n].OrganizationID,
+		}
+	}
+
+	db.Create(&ticketRecords)
 }
 
-func (t Ticket) Insert(db *gorm.DB) {
-	panic("implement me")
-}
-
-func NewTicket() Table {
-	return &Ticket{}
+func NewTicket() *JsonTicket {
+	return new(JsonTicket)
 }
