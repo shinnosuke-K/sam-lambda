@@ -29,8 +29,8 @@ func (t Ticket) HasTable(db *gorm.DB) bool {
 	return db.Migrator().HasTable(&t)
 }
 
-func (t Ticket) CreateTable(db *gorm.DB) {
-	panic("implement me")
+func (t Ticket) CreateTable(db *gorm.DB) error {
+	return db.Migrator().CreateTable(&t)
 }
 
 func (t Ticket) Insert(db *gorm.DB) {

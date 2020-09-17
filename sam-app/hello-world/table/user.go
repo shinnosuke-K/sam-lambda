@@ -25,8 +25,8 @@ func (u User) HasTable(db *gorm.DB) bool {
 	return db.Migrator().HasTable(&u)
 }
 
-func (u User) CreateTable(db *gorm.DB) {
-	panic("implement me")
+func (u User) CreateTable(db *gorm.DB) error {
+	return db.Migrator().CreateTable(&u)
 }
 
 func (u User) Insert(db *gorm.DB) {
