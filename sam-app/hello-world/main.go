@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"hello-world/table"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -26,14 +27,37 @@ func dbOpen() (*gorm.DB, error) {
 
 func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	_, err := dbOpen()
+	db, err := dbOpen()
 
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
 
+	tables := table.New()
+
+	n := 0
+
+	//for n := range tables {
+	if !tables[n].HasTable(db) {
+		err := tables[n].CreateTable(db)
+		if err != nil {
+			return events.APIGatewayProxyResponse{}, err
+		}
+	}
+
+	jsonBody := tables[n].GetBody()
+
+	err = tables[n].Mapping(jsonBody)
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	tables[n].Insert(db)
+
+	//}
+
 	return events.APIGatewayProxyResponse{
-		Body:       string(1),
+		Body:       string(tables[n].GetBody()),
 		StatusCode: 200,
 	}, nil
 }
