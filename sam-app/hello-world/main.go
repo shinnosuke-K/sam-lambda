@@ -20,20 +20,6 @@ func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 		}
 	}
 
-	//record := table.Ticket{
-	//	ID:             0,
-	//	CreateTime:     time.Now().Local(),
-	//	UpdateTime:     time.Now().Local(),
-	//	Type:           "",
-	//	Subject:        "",
-	//	Priority:       "",
-	//	Status:         "",
-	//	Tag:            "",
-	//	RequesterID:    0,
-	//	AssigneeID:     0,
-	//	OrganizationID: 0,
-	//}
-
 	return events.APIGatewayProxyResponse{
 		Body:       string(1),
 		StatusCode: 200,
