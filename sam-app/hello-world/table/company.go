@@ -38,8 +38,16 @@ func (c *JsonOrgs) GetBody() []byte {
 	return nil
 }
 
-func (c *JsonCompanies) Insert(db *gorm.DB) {
-	panic("implement me")
+func (c *JsonOrgs) Insert(db *gorm.DB) {
+
+	for n := range c.Orgs {
+		org := Organization{
+			ID:         c.Orgs[n].ID,
+			Name:       c.Orgs[n].Name,
+			CreateTime: c.Orgs[n].CreateTime.Local(),
+		}
+		db.Create(&org)
+	}
 }
 
 func NewOrganization() *JsonOrgs {

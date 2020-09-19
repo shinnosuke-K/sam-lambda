@@ -95,10 +95,9 @@ func (t *JsonTicket) Mapping(jsonBody []byte) error {
 }
 
 func (t *JsonTicket) Insert(db *gorm.DB) {
-	ticketRecords := make([]Ticket, len(t.Contents))
 
-	for n := range ticketRecords {
-		ticketRecords[n] = Ticket{
+	for n := range t.Contents {
+		ticket := Ticket{
 			ID:             t.Contents[n].ID,
 			CreateTime:     t.Contents[n].CreateTime,
 			UpdateTime:     t.Contents[n].UpdateTime,
@@ -111,9 +110,8 @@ func (t *JsonTicket) Insert(db *gorm.DB) {
 			AssigneeID:     t.Contents[n].AssigneeID,
 			OrganizationID: t.Contents[n].OrganizationID,
 		}
+		db.Create(&ticket)
 	}
-
-	db.Create(&ticketRecords)
 }
 
 func NewTicket() *JsonTicket {

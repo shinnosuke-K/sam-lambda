@@ -11,5 +11,5 @@ type Table interface {
 }
 
 func New() []Table {
-	return []Table{NewTicket(), NewUser(), NewCompany()}
+	return []Table{NewTicket(), NewUser(), NewOrganization()}
 }
