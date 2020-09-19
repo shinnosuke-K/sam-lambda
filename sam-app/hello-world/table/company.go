@@ -7,26 +7,26 @@ import (
 	"gorm.io/gorm"
 )
 
-type JsonCompanies struct {
-	Companies []Company `json:"company"`
-	NextPage  string    `json:"next_page"`
+type JsonOrgs struct {
+	Orgs     []Organization `json:"organization"`
+	NextPage string         `json:"next_page"`
 }
 
-type Company struct {
+type Organization struct {
 	ID         int64     `json:"id"`
 	Name       string    `json:"name"`
 	CreateTime time.Time `json:"create_time"`
 }
 
-func (c *JsonCompanies) HasTable(db *gorm.DB) bool {
-	return db.Migrator().HasTable(&Company{})
+func (c *JsonOrgs) HasTable(db *gorm.DB) bool {
+	return db.Migrator().HasTable(&Organization{})
 }
 
-func (c *JsonCompanies) CreateTable(db *gorm.DB) error {
-	return db.Migrator().CreateTable(&Company{})
+func (c *JsonOrgs) CreateTable(db *gorm.DB) error {
+	return db.Migrator().CreateTable(&Organization{})
 }
 
-func (c *JsonCompanies) Mapping(jsonBody []byte) error {
+func (c *JsonOrgs) Mapping(jsonBody []byte) error {
 	err := json.Unmarshal(jsonBody, &c)
 	if err != nil {
 		return err
@@ -34,7 +34,7 @@ func (c *JsonCompanies) Mapping(jsonBody []byte) error {
 	return nil
 }
 
-func (c *JsonCompanies) GetBody() []byte {
+func (c *JsonOrgs) GetBody() []byte {
 	return nil
 }
 
@@ -42,6 +42,6 @@ func (c *JsonCompanies) Insert(db *gorm.DB) {
 	panic("implement me")
 }
 
-func NewCompany() *JsonCompanies {
-	return new(JsonCompanies)
+func NewOrganization() *JsonOrgs {
+	return new(JsonOrgs)
 }

@@ -44,7 +44,19 @@ func (u *JsonUsers) GetBody() []byte {
 }
 
 func (u JsonUsers) Insert(db *gorm.DB) {
-	panic("implement me")
+
+	for n := range u.Users {
+		user := User{
+			ID:             u.Users[n].ID,
+			Name:           u.Users[n].Name,
+			Email:          u.Users[n].Email,
+			CreateTime:     u.Users[n].CreateTime.Local(),
+			OrganizationID: u.Users[n].OrganizationID,
+			Alias:          u.Users[n].Alias,
+			Role:           u.Users[n].Role,
+		}
+		db.Create(&user)
+	}
 }
 
 func NewUser() *JsonUsers {
