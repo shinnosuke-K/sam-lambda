@@ -1,2 +1,4 @@
 .idea
 sam-app/.aws-sam/
+deploy-app/.aws-sam
+deploy-app/samconfig.toml
