@@ -30,6 +30,9 @@ type Json struct {
 }
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	a := request.QueryStringParameters["id"]
+
 	resp, err := http.Get(JsonOkibaAddress)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
@@ -51,7 +54,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       data[0].Name,
+		Body:       data[0].Name + ":" + a,
 		StatusCode: 200,
 	}, nil
 }
