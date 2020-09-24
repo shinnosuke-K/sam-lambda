@@ -57,7 +57,7 @@ func (t *JsonTicket) GetBody() []byte {
 
 	test := JsonTicket{}
 
-	for n := 0; n < 100; n++ {
+	for n := 0; n < 10000; n++ {
 		test.Contents = append(test.Contents, Content{
 			ID:             int64(n),
 			CreateTime:     time.Now().Add(time.Duration(n)),
