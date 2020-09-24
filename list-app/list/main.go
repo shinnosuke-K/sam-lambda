@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"hello-world/table"
+	"list/table"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

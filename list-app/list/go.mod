@@ -4,6 +4,7 @@ require (
 	gorm.io/gorm v1.20.1
 )
 
-module hello-world
+module list
 
 go 1.14
+

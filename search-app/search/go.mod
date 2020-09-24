@@ -4,6 +4,6 @@ require (
 	gorm.io/gorm v1.20.1
 )
 
-module all
+module search
 
 go 1.14

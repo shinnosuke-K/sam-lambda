@@ -1,8 +1,8 @@
 package main
 
 import (
+	"all/table"
 	"fmt"
-	"hello-world/table"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
