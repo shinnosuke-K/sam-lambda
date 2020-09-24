@@ -25,7 +25,7 @@ func dbOpen() (*gorm.DB, error) {
 	return gorm.Open(mysql.Open(createConnect()), nil)
 }
 
-func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func allHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	db, err := dbOpen()
 
@@ -62,5 +62,5 @@ func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 }
 
 func main() {
-	lambda.Start(httpHandler)
+	lambda.Start(allHandler)
 }
