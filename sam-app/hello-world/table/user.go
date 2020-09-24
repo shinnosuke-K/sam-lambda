@@ -2,6 +2,7 @@ package table
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -40,7 +41,21 @@ func (u *JsonUsers) Mapping(jsonBody []byte) error {
 }
 
 func (u *JsonUsers) GetBody() []byte {
-	return nil
+
+	test := JsonUsers{}
+	for n := 0; n < 3; n++ {
+		test.Users = append(test.Users, User{
+			ID:             int64(n + 1),
+			Name:           fmt.Sprintf("%d", n+1),
+			Email:          "",
+			CreateTime:     time.Now().Local().Add(time.Duration(n)),
+			OrganizationID: int64(n + 2),
+			Alias:          "",
+			Role:           "",
+		})
+	}
+	j, _ := json.Marshal(test)
+	return j
 }
 
 func (u JsonUsers) Insert(db *gorm.DB) {

@@ -2,6 +2,7 @@ package table
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -35,7 +36,17 @@ func (c *JsonOrgs) Mapping(jsonBody []byte) error {
 }
 
 func (c *JsonOrgs) GetBody() []byte {
-	return nil
+
+	test := JsonOrgs{}
+	for n := 0; n < 3; n++ {
+		test.Orgs = append(test.Orgs, Organization{
+			ID:         int64(n + 2),
+			Name:       fmt.Sprintf("株式会社%d", n),
+			CreateTime: time.Now().Add(time.Duration(n)),
+		})
+	}
+	j, _ := json.Marshal(test)
+	return j
 }
 
 func (c *JsonOrgs) Insert(db *gorm.DB) {

@@ -51,35 +51,26 @@ func (t *JsonTicket) CreateTable(db *gorm.DB) error {
 
 func (t *JsonTicket) GetBody() []byte {
 
-	test := JsonTicket{
-		Contents: []Content{
-			{
-				ID:             time.Now().Unix() / 2,
-				CreateTime:     time.Now().Local(),
-				UpdateTime:     time.Now().Local(),
-				Type:           "",
-				Subject:        "",
-				Priority:       "",
-				Status:         "",
-				Tags:           []string{"a", "b", "c"},
-				RequesterID:    0,
-				AssigneeID:     0,
-				OrganizationID: 0,
-			},
-			{
-				ID:             time.Now().Unix() / 3,
-				CreateTime:     time.Now().Local(),
-				UpdateTime:     time.Now().Local(),
-				Type:           "",
-				Subject:        "",
-				Priority:       "",
-				Status:         "",
-				Tags:           []string{"d", "e", "f"},
-				RequesterID:    0,
-				AssigneeID:     0,
-				OrganizationID: 0,
-			}},
-		NextPage: "",
+	types := []string{"problem", "incident", "question", "task"}
+	priority := []string{"urgent", "high", "normal", "low"}
+	status := []string{"new", "open", "pending", "hold", "solved", "closed"}
+
+	test := JsonTicket{}
+
+	for n := 0; n < 100; n++ {
+		test.Contents = append(test.Contents, Content{
+			ID:             int64(n),
+			CreateTime:     time.Now().Add(time.Duration(n)),
+			UpdateTime:     time.Now().Add(time.Duration(n)),
+			Type:           types[n%4],
+			Subject:        "",
+			Priority:       priority[n%4],
+			Status:         status[n%4],
+			Tags:           []string{},
+			RequesterID:    int64(n % 3),
+			AssigneeID:     int64(n%3 + 1),
+			OrganizationID: int64(n%3 + 2),
+		})
 	}
 
 	j, _ := json.Marshal(test)

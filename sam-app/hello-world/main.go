@@ -35,29 +35,28 @@ func httpHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyR
 
 	tables := table.New()
 
-	n := 0
+	//n := 0
 
-	//for n := range tables {
-	if !tables[n].HasTable(db) {
-		err := tables[n].CreateTable(db)
+	for n := range tables {
+		if !tables[n].HasTable(db) {
+			err := tables[n].CreateTable(db)
+			if err != nil {
+				return events.APIGatewayProxyResponse{}, err
+			}
+		}
+
+		jsonBody := tables[n].GetBody()
+
+		err = tables[n].Mapping(jsonBody)
 		if err != nil {
 			return events.APIGatewayProxyResponse{}, err
 		}
+
+		tables[n].Insert(db)
 	}
-
-	jsonBody := tables[n].GetBody()
-
-	err = tables[n].Mapping(jsonBody)
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
-
-	tables[n].Insert(db)
-
-	//}
 
 	return events.APIGatewayProxyResponse{
-		Body:       string(tables[n].GetBody()),
+		Body:       "ok",
 		StatusCode: 200,
 	}, nil
 }
