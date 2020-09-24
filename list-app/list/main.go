@@ -26,7 +26,7 @@ func dbOpen() (*gorm.DB, error) {
 	return gorm.Open(mysql.Open(createConnect()), nil)
 }
 
-func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func listHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	db, err := dbOpen()
 	if err != nil {
@@ -54,5 +54,5 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 }
 
 func main() {
-	lambda.Start(handler)
+	lambda.Start(listHandler)
 }
