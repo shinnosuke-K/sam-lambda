@@ -1,6 +1,7 @@
 FROM mysql:latest
 
-COPY ./mysql/* /docker-entrypoint-initdb.d
+COPY ./mysql/init.sql /docker-entrypoint-initdb.d
+COPY ./mysql/my.cnf /etc/mysql/conf.d/my.cnf
 
 EXPOSE 3306
 
