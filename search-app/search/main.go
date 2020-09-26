@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"search/table"
+	"strings"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -37,9 +38,12 @@ func createSQL(params map[string]string, db *gorm.DB) (*gorm.DB, error) {
 	}
 
 	if p, ok := params["subject"]; ok {
-		db = db.Where("subject LIKE ?", "%"+p+"%")
-		if err := db.Error; err != nil {
-			return nil, err
+		ps := strings.Split(p, ",")
+		for n := range ps {
+			db = db.Where("subject LIKE ?", "%"+ps[n]+"%")
+			if err := db.Error; err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -51,9 +55,12 @@ func createSQL(params map[string]string, db *gorm.DB) (*gorm.DB, error) {
 	}
 
 	if p, ok := params["type"]; ok {
-		db = db.Where("type = ?", p)
-		if err := db.Error; err != nil {
-			return nil, err
+		ps := strings.Split(p, ",")
+		for n := range ps {
+			db = db.Where("type = ?", ps[n])
+			if err := db.Error; err != nil {
+				return nil, err
+			}
 		}
 	}
 
