@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"search/table"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -26,6 +27,39 @@ func dbOpen() (*gorm.DB, error) {
 	return gorm.Open(mysql.Open(createConnect()), nil)
 }
 
+func createSQL(params map[string]string, db *gorm.DB) (*gorm.DB, error) {
+
+	if p, ok := params["id"]; ok {
+		db = db.Where("id = ?", p)
+		if err := db.Error; err != nil {
+			return nil, err
+		}
+	}
+
+	if p, ok := params["subject"]; ok {
+		db = db.Where("subject LIKE ?", "%"+p+"%")
+		if err := db.Error; err != nil {
+			return nil, err
+		}
+	}
+
+	if _, ok := params["create"]; ok {
+		db = db.Where("create_time > ?", time.RFC3339)
+		if err := db.Error; err != nil {
+			return nil, err
+		}
+	}
+
+	if p, ok := params["type"]; ok {
+		db = db.Where("type = ?", p)
+		if err := db.Error; err != nil {
+			return nil, err
+		}
+	}
+
+	return db, nil
+}
+
 func searchHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	db, err := dbOpen()
@@ -33,30 +67,14 @@ func searchHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		return events.APIGatewayProxyResponse{}, err
 	}
 
-	queries := request.QueryStringParameters
+	params := request.QueryStringParameters
 
-	if q, ok := queries["id"]; ok {
-		fmt.Println("id")
-		db = db.Where("id = ?", q)
-	}
-
-	if q, ok := queries["subject"]; ok {
-		fmt.Println("subject")
-		db = db.Where("subject like %?%", q)
-	}
-
-	if q, ok := queries["create"]; ok {
-		fmt.Println("create")
-		db = db.Where("create_time > ", q)
-	}
-
-	if q, ok := queries["type"]; ok {
-		fmt.Println("type")
-		db = db.Where("type = ?", q)
+	db, err = createSQL(params, db)
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	tickets := make([]table.Ticket, 0)
-
 	if err := db.Find(&tickets).Error; err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
