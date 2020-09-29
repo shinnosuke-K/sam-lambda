@@ -11,15 +11,15 @@ type Ticket struct {
 	Tickets domain.Tickets
 }
 
-func (t *Ticket) Has(db *gorm.DB) bool {
+func (t *Ticket) Has() bool {
 	return t.DB.Migrator().HasTable(&domain.Ticket{})
 }
 
-func (t *Ticket) CreateTable(db *gorm.DB) error {
+func (t *Ticket) CreateTable() error {
 	return t.DB.Migrator().CreateTable(&domain.Ticket{})
 }
 
-func (t *Ticket) Insert(db *gorm.DB) error {
+func (t *Ticket) Insert() error {
 	return nil
 }
 
