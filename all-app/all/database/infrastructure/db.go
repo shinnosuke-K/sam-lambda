@@ -21,6 +21,6 @@ func NewDB() (*gorm.DB, error) {
 	return gorm.Open(mysql.Open(createConnect()), nil)
 }
 
-func Exec(db *gorm.DB, query string) err {
+func Exec(db *gorm.DB, query string) error {
 	return nil
 }
