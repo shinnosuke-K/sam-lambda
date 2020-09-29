@@ -1,6 +1,7 @@
 package main
 
 import (
+	"all/infrastructure/persistence"
 	"all/table"
 	"fmt"
 
@@ -59,6 +60,17 @@ func allHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRe
 		Body:       "ok",
 		StatusCode: 200,
 	}, nil
+}
+
+func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	db, err := persistence.NewDB()
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	// ticket
+	ticket := persistence.NewOrg()
+
 }
 
 func main() {

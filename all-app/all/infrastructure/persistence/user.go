@@ -1,7 +1,7 @@
-package infrastructure
+package persistence
 
 import (
-	"all/database/domain"
+	"all/domain"
 
 	"gorm.io/gorm"
 )
@@ -11,14 +11,18 @@ type User struct {
 	Users domain.Users
 }
 
-func (t *User) Has(db *gorm.DB) bool {
+func (t *User) Has() bool {
 	return t.DB.Migrator().HasTable(&domain.Ticket{})
 }
 
-func (t *User) CreateTable(db *gorm.DB) error {
+func (t *User) CreateTable() error {
 	return t.DB.Migrator().CreateTable(&domain.Ticket{})
 }
 
-func (t *User) Insert(db *gorm.DB) error {
+func (t *User) Insert() error {
 	return nil
+}
+
+func NewUser(db *gorm.DB) *User {
+	return &User{DB: db}
 }

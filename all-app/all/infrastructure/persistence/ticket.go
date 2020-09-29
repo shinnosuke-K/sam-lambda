@@ -1,7 +1,7 @@
-package infrastructure
+package persistence
 
 import (
-	"all/database/domain"
+	"all/domain"
 
 	"gorm.io/gorm"
 )
@@ -21,4 +21,8 @@ func (t *Ticket) CreateTable(db *gorm.DB) error {
 
 func (t *Ticket) Insert(db *gorm.DB) error {
 	return nil
+}
+
+func NewTicket(db *gorm.DB) *Ticket {
+	return &Ticket{DB: db}
 }
