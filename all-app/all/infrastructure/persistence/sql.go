@@ -1,4 +1,4 @@
-package infrastructure
+package persistence
 
 const SQL = "create view spreadsheet as " +
 	"select " +
