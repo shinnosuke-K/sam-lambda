@@ -20,6 +20,11 @@ func (t *Ticket) CreateTable() error {
 }
 
 func (t *Ticket) Insert() error {
+	for _, ticket := range t.Tickets {
+		if err := t.DB.Create(&ticket).Error; err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
