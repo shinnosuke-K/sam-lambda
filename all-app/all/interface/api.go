@@ -98,6 +98,7 @@ func Parse(format interface{}, byteBody []byte) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
+		return t, nil
 
 	case UsersResponse:
 		var u User
@@ -105,6 +106,7 @@ func Parse(format interface{}, byteBody []byte) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
+		return u, nil
 
 	case OrgsResponse:
 		var o Organization
@@ -112,6 +114,7 @@ func Parse(format interface{}, byteBody []byte) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
+		return o, nil
 	}
 
 	return nil, errors.New("invalid format")
