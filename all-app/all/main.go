@@ -1,78 +1,76 @@
 package main
 
 import (
+	"all/domain"
 	"all/infrastructure/persistence"
-	"all/table"
-	"fmt"
-
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	api "all/interface"
+	"errors"
+	"net/http"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func createConnect() string {
-	USER := "root"
-	PASS := "root"
-	PROTOCOL := "tcp(zendesk-db:3306)"
-	DBNAME := "zendesk"
-	OPTION := "charset=utf8mb4&parseTime=True&loc=Local"
-
-	return fmt.Sprintf("%s:%s@%s/%s?%s", USER, PASS, PROTOCOL, DBNAME, OPTION)
-}
-
-func dbOpen() (*gorm.DB, error) {
-	return gorm.Open(mysql.Open(createConnect()), nil)
-}
-
-func allHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
-	db, err := dbOpen()
-
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
-
-	tables := table.New()
-
-	//n := 0
-
-	for n := range tables {
-		if !tables[n].HasTable(db) {
-			err := tables[n].CreateTable(db)
-			if err != nil {
-				return events.APIGatewayProxyResponse{}, err
-			}
-		}
-
-		jsonBody := tables[n].GetBody()
-
-		err = tables[n].Mapping(jsonBody)
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		tables[n].Insert(db)
-	}
-
-	return events.APIGatewayProxyResponse{
-		Body:       "ok",
-		StatusCode: 200,
-	}, nil
-}
-
-func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func allhandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	db, err := persistence.NewDB()
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
 
 	// ticket
-	ticket := persistence.NewOrg()
+	ticket := persistence.NewTicket(db)
 
+	if !ticket.Has() {
+		if err := ticket.CreateTable(); err != nil {
+			return events.APIGatewayProxyResponse{}, err
+		}
+	}
+
+	ticketRes := new(api.TicketsResponse)
+	byteBody, err := api.GetBody(ticketRes)
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	parsedTicket, err := api.Parse(ticketRes, byteBody)
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	ticketRes, ok := parsedTicket.(*api.TicketsResponse)
+	if !ok {
+		return events.APIGatewayProxyResponse{}, errors.New("error")
+	}
+
+	for _, t := range ticketRes.Tickets {
+		ticket.Tickets = append(ticket.Tickets, domain.Ticket{
+			ID:             t.ID,
+			CreateTime:     t.CreateTime.Local(),
+			UpdateTime:     t.UpdateTime.Local(),
+			Type:           t.Type,
+			Subject:        t.Subject,
+			Priority:       t.Priority,
+			Status:         t.Status,
+			Tag:            strings.Join(t.Tags, ","),
+			RequesterID:    t.RequesterID,
+			AssigneeID:     t.AssigneeID,
+			OrganizationID: t.OrganizationID,
+		})
+	}
+
+	err = ticket.Insert()
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Headers:    map[string]string{"Content-Type": "application/json"},
+		Body:       "ok",
+	}, nil
 }
 
 func main() {
-	lambda.Start(allHandler)
+	lambda.Start(allhandler)
 }
