@@ -27,7 +27,7 @@ func getTicketsBody() ([]byte, error) {
 
 	for n := 0; n < 10000; n++ {
 		test.Tickets = append(test.Tickets, Ticket{
-			ID:             int64(n),
+			ID:             int64(n + 1),
 			CreateTime:     time.Now().Add(time.Duration(n)),
 			UpdateTime:     time.Now().Add(time.Duration(n)),
 			Type:           types[n%4],
@@ -40,6 +40,7 @@ func getTicketsBody() ([]byte, error) {
 			OrganizationID: int64(n%3 + 2),
 		})
 	}
+	test.NextPage = "localhost"
 
 	j, err := json.Marshal(&test)
 	if err != nil {
