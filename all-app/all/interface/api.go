@@ -104,29 +104,30 @@ func GetBody(format interface{}) ([]byte, error) {
 func Parse(format interface{}, byteBody []byte) (interface{}, error) {
 
 	switch format.(type) {
-	case TicketsResponse:
-		var t Ticket
+	case *TicketsResponse:
+		var t TicketsResponse
+		fmt.Println("ticket")
 		err := json.Unmarshal(byteBody, &t)
 		if err != nil {
 			return nil, err
 		}
-		return t, nil
+		return &t, nil
 
-	case UsersResponse:
-		var u User
+	case *UsersResponse:
+		var u UsersResponse
 		err := json.Unmarshal(byteBody, &u)
 		if err != nil {
 			return nil, err
 		}
-		return u, nil
+		return &u, nil
 
-	case OrgsResponse:
-		var o Organization
+	case *OrgsResponse:
+		var o OrgsResponse
 		err := json.Unmarshal(byteBody, &o)
 		if err != nil {
 			return nil, err
 		}
-		return o, nil
+		return &o, nil
 	}
 
 	return nil, errors.New("invalid format")
