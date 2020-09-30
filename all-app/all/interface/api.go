@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func getTicketsBody() []byte {
+func getTicketsBody() ([]byte, error) {
 	types := []string{"problem", "incident", "question", "task"}
 	priority := []string{"urgent", "high", "normal", "low"}
 	status := []string{"new", "open", "pending", "hold", "solved", "closed"}
@@ -34,18 +34,21 @@ func getTicketsBody() []byte {
 			Subject:        subject[n%len(subject)],
 			Priority:       priority[n%len(priority)],
 			Status:         status[n%len(status)],
-			Tags:           []string{},
+			Tags:           []string{"a", "b", "c"},
 			RequesterID:    int64(n % 3),
 			AssigneeID:     int64(n%3 + 1),
 			OrganizationID: int64(n%3 + 2),
 		})
 	}
 
-	j, _ := json.Marshal(test)
-	return j
+	j, err := json.Marshal(&test)
+	if err != nil {
+		return nil, err
+	}
+	return j, nil
 }
 
-func getUsersBody() []byte {
+func getUsersBody() ([]byte, error) {
 	test := UsersResponse{}
 	for n := 0; n < 3; n++ {
 		test.Users = append(test.Users, User{
@@ -58,11 +61,14 @@ func getUsersBody() []byte {
 			Role:           "",
 		})
 	}
-	j, _ := json.Marshal(test)
-	return j
+	j, err := json.Marshal(test)
+	if err != nil {
+		return nil, err
+	}
+	return j, nil
 }
 
-func getOrgsBody() []byte {
+func getOrgsBody() ([]byte, error) {
 	test := OrgsResponse{}
 	for n := 0; n < 3; n++ {
 		test.Orgs = append(test.Orgs, Organization{
@@ -71,20 +77,25 @@ func getOrgsBody() []byte {
 			CreateTime: time.Now().Add(time.Duration(n)),
 		})
 	}
-	j, _ := json.Marshal(test)
-	return j
+	j, err := json.Marshal(test)
+	if err != nil {
+		return nil, err
+	}
+	return j, nil
+
 }
 
 func GetBody(format interface{}) ([]byte, error) {
 	switch format.(type) {
-	case TicketsResponse:
-		return getTicketsBody(), nil
+	case *TicketsResponse:
+		fmt.Println("ticket response")
+		return getTicketsBody()
 
-	case UsersResponse:
-		return getUsersBody(), nil
+	case *UsersResponse:
+		return getUsersBody()
 
-	case OrgsResponse:
-		return getOrgsBody(), nil
+	case *OrgsResponse:
+		return getOrgsBody()
 	}
 	return nil, errors.New("invalid format")
 }
