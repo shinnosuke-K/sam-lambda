@@ -22,5 +22,8 @@ func NewDB() (*gorm.DB, error) {
 }
 
 func Exec(db *gorm.DB, query string) error {
+	if err := db.Exec(query).Error; err != nil {
+		return err
+	}
 	return nil
 }
