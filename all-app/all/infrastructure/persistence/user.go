@@ -12,11 +12,11 @@ type User struct {
 }
 
 func (u *User) Has() bool {
-	return u.DB.Migrator().HasTable(&domain.Ticket{})
+	return u.DB.Migrator().HasTable(&domain.User{})
 }
 
 func (u *User) CreateTable() error {
-	return u.DB.Migrator().CreateTable(&domain.Ticket{})
+	return u.DB.Migrator().CreateTable(&domain.User{})
 }
 
 func (u *User) Insert() error {
