@@ -25,7 +25,7 @@ func getTicketsBody() ([]byte, error) {
 
 	test := TicketsResponse{}
 
-	for n := 0; n < 10000; n++ {
+	for n := 0; n < 1000; n++ {
 		test.Tickets = append(test.Tickets, Ticket{
 			ID:             int64(n + 1),
 			CreateTime:     time.Now().Add(time.Duration(n)),
@@ -89,7 +89,6 @@ func getOrgsBody() ([]byte, error) {
 func GetBody(format interface{}) ([]byte, error) {
 	switch format.(type) {
 	case *TicketsResponse:
-		fmt.Println("ticket response")
 		return getTicketsBody()
 
 	case *UsersResponse:
@@ -106,7 +105,6 @@ func Parse(format interface{}, byteBody []byte) (interface{}, error) {
 	switch format.(type) {
 	case *TicketsResponse:
 		var t TicketsResponse
-		fmt.Println("ticket")
 		err := json.Unmarshal(byteBody, &t)
 		if err != nil {
 			return nil, err
@@ -129,6 +127,5 @@ func Parse(format interface{}, byteBody []byte) (interface{}, error) {
 		}
 		return &o, nil
 	}
-
 	return nil, errors.New("invalid format")
 }
