@@ -11,15 +11,20 @@ type Organization struct {
 	Organizations domain.Organizations
 }
 
-func (t *Organization) Has() bool {
-	return t.DB.Migrator().HasTable(&domain.Organization{})
+func (o *Organization) Has() bool {
+	return o.DB.Migrator().HasTable(&domain.Organization{})
 }
 
-func (t *Organization) CreateTable() error {
-	return t.DB.Migrator().CreateTable(&domain.Organization{})
+func (o *Organization) CreateTable() error {
+	return o.DB.Migrator().CreateTable(&domain.Organization{})
 }
 
-func (t *Organization) Insert() error {
+func (o *Organization) Insert() error {
+	for _, org := range o.Organizations {
+		if err := o.DB.Create(&org).Error; err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

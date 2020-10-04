@@ -11,15 +11,20 @@ type User struct {
 	Users domain.Users
 }
 
-func (t *User) Has() bool {
-	return t.DB.Migrator().HasTable(&domain.Ticket{})
+func (u *User) Has() bool {
+	return u.DB.Migrator().HasTable(&domain.Ticket{})
 }
 
-func (t *User) CreateTable() error {
-	return t.DB.Migrator().CreateTable(&domain.Ticket{})
+func (u *User) CreateTable() error {
+	return u.DB.Migrator().CreateTable(&domain.Ticket{})
 }
 
-func (t *User) Insert() error {
+func (u *User) Insert() error {
+	for _, user := range u.Users {
+		if err := u.DB.Create(&user).Error; err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
